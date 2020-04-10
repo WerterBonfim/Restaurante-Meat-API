@@ -1,0 +1,24 @@
+{
+  "name": "meat-api",
+  "version": "1.0.0",
+  "description": "Projeto backend do restaurante",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WerterAllan/Restaurante-Meat-API.git"
+  },
+  "keywords": [
+    "API",
+    "MongoDB",
+    "Restify"
+  ],
+  "author": "werter bonfim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WerterAllan/Restaurante-Meat-API/issues"
+  },
+  "homepage": "https://github.com/WerterAllan/Restaurante-Meat-API#readme"
+}
