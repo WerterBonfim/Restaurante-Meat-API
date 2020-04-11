@@ -20,5 +20,13 @@
   "bugs": {
     "url": "https://github.com/WerterAllan/Restaurante-Meat-API/issues"
   },
-  "homepage": "https://github.com/WerterAllan/Restaurante-Meat-API#readme"
+  "homepage": "https://github.com/WerterAllan/Restaurante-Meat-API#readme",
+  "dependencies": {
+    "mongoose": "5.9.7",
+    "restify": "6.3.4"
+  },
+  "devDependencies": {
+    "@types/mongoose": "5.7.10",
+    "@types/restify": "5.0.6"
+  }
 }
