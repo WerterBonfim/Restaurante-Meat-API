@@ -5,7 +5,7 @@ const server = new Server();
 
 server.bootstrap([usersRouter])
 .then( server =>{
-    console.log('Serer is listening on:', server.application.address())
+    console.log('Serer is listening on:', server.app.address())
 })
 .catch( erro => {
     console.log('Server failed to start');

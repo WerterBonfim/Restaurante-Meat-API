@@ -4,7 +4,9 @@
   "description": "Projeto backend do restaurante",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon main.ts",
+    "dev:debug-brk": "nodemon --inspect-brk main.ts",
+    "dev:debug": "nodemon --inspect main.ts"
   },
   "repository": {
     "type": "git",
@@ -22,11 +24,18 @@
   },
   "homepage": "https://github.com/WerterAllan/Restaurante-Meat-API#readme",
   "dependencies": {
+    "bcrypt": "4.0.1",
     "mongoose": "5.9.7",
-    "restify": "6.3.4"
+    "restify": "6.3.4",
+    "restify-errors": "8.0.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "3.0.0",
     "@types/mongoose": "5.7.10",
-    "@types/restify": "5.0.6"
+    "@types/restify": "5.0.6",
+    "@types/restify-errors": "4.3.3",
+    "nodemon": "^2.0.3",
+    "ts-node": "^8.8.2",
+    "typescript": "^3.8.3"
   }
 }

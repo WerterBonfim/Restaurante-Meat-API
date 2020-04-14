@@ -3,16 +3,18 @@ import mongoose from 'mongoose';
 
 import { environment as env } from '../common/environment';
 import { Router } from '../common/router';
+import { mergePatchBodyParser } from './merge-path.parser';
+import { handleError } from './error.handler';
 
 export class Server {
 
-    application: restify.Server;
+    public app: restify.Server;
 
-    initializedDb(): any {
+    public initializedDb(): any {
 
         (<any>mongoose.Promise) = global.Promise;
         return mongoose.connect(env.db.url, {
-            useNewUrlParser: true            
+            useNewUrlParser: true
         });
     }
 
@@ -22,29 +24,25 @@ export class Server {
 
             try {
 
-                this.application = restify.createServer({
+                this.app = restify.createServer({
                     name: 'meat-api',
                     version: '1.0.0'
                 });
 
-                this.application.use(restify.plugins.queryParser());
-                this.application.use(restify.plugins.bodyParser());
-
-                this.application.listen(env.server.port, () => {
-                    resolve(this.application);
-                });
+                this.app.use(restify.plugins.queryParser());
+                this.app.use(restify.plugins.bodyParser());
+                this.app.use(mergePatchBodyParser);
 
                 // Routes
-
                 for (let router of routers)
-                    router.applayRoutes(this.application);
+                    router.applayRoutes(this.app);
 
-                this.application.get('/hello', (req, resp, next) => {
+                this.app.on('restifyError', handleError);
 
-                    resp.json({ message: 'hello' });
-                    return next();
-
+                this.app.listen(env.server.port, () => {
+                    resolve(this.app);
                 });
+
 
 
             } catch (error) {
@@ -56,7 +54,7 @@ export class Server {
         })
     }
 
-    bootstrap(routers: Router[] = []): Promise<Server> {
+    public bootstrap(routers: Router[] = []): Promise<Server> {
 
         return this.initializedDb()
             .then(
