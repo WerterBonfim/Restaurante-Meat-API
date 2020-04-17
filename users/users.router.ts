@@ -1,16 +1,17 @@
-import { Router } from "../common/router";
+import restify from 'restify';
+
 import { User } from "./users.model";
-import { NotFoundError } from 'restify-errors';
+
+import { ModelRouter } from "../common/modal-router";
 
 
-class UsersRouter extends Router {
 
-    /**
-     *
-     */
+
+class UsersRouter extends ModelRouter<User> {
 
     constructor() {
-        super();
+        super(User);
+
         this.on('beforeRender', document => {
 
             if (document)
@@ -19,78 +20,31 @@ class UsersRouter extends Router {
         })
     }
 
-    public applayRoutes(app: import("restify").Server) {
+    private findByEmail = (req: restify.Request, res: restify.Response, next: restify.Next): void => {
 
-        app.get('/users', (req, resp, next) => {
+        if (!req.query.email) {
+            return next();
+        }
 
-            User.find()
-                .then(this.render(resp, next))
-                .catch(next);
+        User
+            //.find({ email: req.query.email })
+            .findByEmail(req.query.email)
+            .then(user => user ? [user] : [])
+            .then(this.renderAll(res, next))
+            .catch(next);
 
-        });
+    }
 
+    public applayRoutes(app: restify.Server) {
 
-        app.get('/users/:id', (req, res, next) => {
+        app.get({ path: `${this.basePath}`, version: '2.0.0' }, [this.findByEmail, this.findAll]);
+        app.get({ path: `${this.basePath}`, version: '1.0.0' }, this.findAll);
 
-            User.findById(req.params.id)
-                .then(this.render(res, next))
-                .catch(next);
-
-        });
-
-
-        app.post('/users', (req, res, next) => {
-
-            let user = new User(req.body);
-            user.save()
-                .then(this.render(res, next))
-                .catch(next);
-
-
-
-            //user.save();
-
-        });
-
-        app.put('/users/:id', (req, res, next) => {
-
-            const options = { new: true, runValidators: true }
-            User.update({ _id: req.params.id }, req.body, options)
-                .exec()
-                .then(this.renderResult(res, next))
-                .then(() => User.findById(req.params.id))
-                .then(this.render(res, next))
-                .catch(next);
-
-
-        });
-
-        app.del('/users/:id', (req, res, next) => {
-
-            User.deleteOne({ _id: req.params.id })
-                .exec()
-                .then(result => {
-
-                    !!result.n ?
-                        res.send(204) :
-                        res.send(404);                    
-                    
-                    return next();
-
-                })
-                .catch(next);
-
-
-
-        });
-
-        app.patch('/users/:id', (req, respo, next) => {
-            const options = { new: true, runValidators: true }
-            User.findByIdAndUpdate(req.params.id, req.body, options)
-                .then(this.render(respo, next))
-                .catch(next);
-
-        });
+        app.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
+        app.post(`${this.basePath}`, [this.validateId, this.save]);
+        app.put(`${this.basePath}/:id`, [this.validateId, this.replace]);
+        app.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
+        app.patch(`${this.basePath}/:id`, [this.validateId, this.update]);
 
     }
 

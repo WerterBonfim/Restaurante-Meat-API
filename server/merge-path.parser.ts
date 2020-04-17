@@ -8,9 +8,8 @@ export const mergePatchBodyParser =
 
         
         const eUmaRequisicaoParical =
-        req.getContentType() === mpContentType && req.method === 'PATCH';
+        req.getContentType() === mpContentType && req.method === 'PATCH';        
         
-        console.log('req content type', eUmaRequisicaoParical)
         if (!eUmaRequisicaoParical)
             return next();
 

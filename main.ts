@@ -1,9 +1,9 @@
 import { Server } from './server/server';
-import { usersRouter } from './users/users.router';
+import { listOfRouters } from './common/list-of-routers';
 
 const server = new Server();
 
-server.bootstrap([usersRouter])
+server.bootstrap(listOfRouters)
 .then( server =>{
     console.log('Serer is listening on:', server.app.address())
 })

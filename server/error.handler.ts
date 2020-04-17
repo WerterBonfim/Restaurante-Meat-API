@@ -1,4 +1,5 @@
 import * as restify from 'restify'
+import { environment } from '../common/environment';
 
 const buildFriendlyErros = (err: any): any => {
 
@@ -17,7 +18,8 @@ const buildFriendlyErros = (err: any): any => {
 
 export const handleError = (req: restify.Request, res: restify.Response, err: any, cb: any) => {
 
-    console.log('erros', err)
+    if (environment.logErros)
+        console.log('erros encontrados:', err)
 
     err.toJSON = () => {
         return {

@@ -9,6 +9,10 @@ export interface User extends mongose.Document {
     password: string;
 }
 
+export interface UserModel extends mongose.Model<User> {
+    findByEmail(email: string): Promise<User>;
+}
+
 const userSchema = new mongose.Schema({
     name: {
         type: String,
@@ -42,6 +46,10 @@ const userSchema = new mongose.Schema({
         }
     }
 });
+
+userSchema.statics.findByEmail = function(email: string) {
+    return this.findOne({email});
+}
 
 const hasPassword = (obj, next) => {
     
@@ -82,4 +90,4 @@ userSchema.pre('save', saveMiddleware);
 userSchema.pre('findOneAndUpdate', updateMiddleware);
 userSchema.pre('update', updateMiddleware);
 
-export const User = mongose.model<User>('User', userSchema);
+export const User = mongose.model<User, UserModel>('User', userSchema);

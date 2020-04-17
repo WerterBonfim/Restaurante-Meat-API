@@ -14,7 +14,8 @@ export class Server {
 
         (<any>mongoose.Promise) = global.Promise;
         return mongoose.connect(env.db.url, {
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            useUnifiedTopology: true            
         });
     }
 
@@ -62,6 +63,12 @@ export class Server {
             );
 
 
+    }
+
+
+    public shutdown(): any {
+        return mongoose.disconnect()
+            .then(() => this.app.close());
     }
 
 }
