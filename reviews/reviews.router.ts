@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 import { ModelRouter } from "../common/modal-router";
 import { Review } from "./reviews.model";
+import { authorize } from '../security/authz.handler';
 
 class ReviewsRouter extends ModelRouter<Review> {
     /**
@@ -21,7 +22,7 @@ class ReviewsRouter extends ModelRouter<Review> {
 
         app.get(`${this.basePath}`, this.findAll);
         app.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
-        app.post(`${this.basePath}`, [this.validateId, this.save]);
+        app.post(`${this.basePath}`, [ authorize('user'), this.validateId, this.save]);
         // app.put(`${this.basePath}/:id`, [this.validateId, this.replace]);
         // app.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
         // app.patch(`${this.basePath}/:id`, [this.validateId, this.update]);

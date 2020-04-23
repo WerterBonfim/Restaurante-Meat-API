@@ -9,6 +9,7 @@ const buildFriendlyErros = (err: any): any => {
         messages.push({ message: err.errors[name].message});
     
     return {
+        message: 'Validation error while processing your request',
         errors: messages
     };
 

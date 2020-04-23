@@ -2,6 +2,7 @@ import { ModelRouter } from "../common/modal-router";
 import { Restaurant } from "./restaurants.model";
 import * as restify from 'restify';
 import { NotFoundError } from "restify-errors";
+import { authorize } from "../security/authz.handler";
 
 
 
@@ -62,13 +63,13 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
         
         app.get(`${this.basePath}`, this.findAll);
         app.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
-        app.post(`${this.basePath}`, [this.validateId, this.save]);
-        app.put(`${this.basePath}/:id`, [this.validateId, this.replace]);
-        app.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
-        app.patch(`${this.basePath}/:id`, [this.validateId, this.update]);
+        app.post(`${this.basePath}`, [ authorize('admin'), this.validateId, this.save]);
+        app.put(`${this.basePath}/:id`, [ authorize('admin'), this.validateId, this.replace]);
+        app.del(`${this.basePath}/:id`, [ authorize('admin'), this.validateId, this.delete]);
+        app.patch(`${this.basePath}/:id`, [ authorize('admin'), this.validateId, this.update]);
 
         app.get(`${this.basePath}/:id/menu`, [this.validateId, this.findMenu]);
-        app.put(`${this.basePath}/:id/menu`, [this.validateId, this.replaceMenu]);
+        app.put(`${this.basePath}/:id/menu`, [ authorize('admin'), this.validateId, this.replaceMenu]);
 
     }
 

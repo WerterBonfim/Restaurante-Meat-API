@@ -15,6 +15,7 @@ const beforeAllTests = (): Promise<any> => {
     env.db.url = process.env.DB_URL || 'mongodb://localhost/meat-api-test-db';
     env.server.port = process.env.SERVER_PORT || 3001;
     env.logErros = false;
+    env.security.enableHTTPS = false;
 
     //address = `localhost:${env.server.port}`
     server = new Server();

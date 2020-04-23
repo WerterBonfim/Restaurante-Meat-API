@@ -1,16 +1,21 @@
-import mongose, { Query } from 'mongoose';
+import mongose, { Query, connection } from 'mongoose';
 import { isValidCPF } from '../common/validators';
 import * as bcrypt from 'bcrypt';
 import { environment as env } from '../common/environment';
 
-export interface User extends mongose.Document {
+export interface User extends mongose.Document {    
     name: string;
-    email: string;
+    email: string;    
     password: string;
+    cpf: string;
+    gender: string;
+    profiles: string[];    
+    matches(password: string): Promise<boolean>;
+    hasAny(...profiles: string[]): boolean
 }
 
 export interface UserModel extends mongose.Model<User> {
-    findByEmail(email: string): Promise<User>;
+    findByEmail(email: string, projection?: string): Promise<User>;
 }
 
 const userSchema = new mongose.Schema({
@@ -44,11 +49,24 @@ const userSchema = new mongose.Schema({
             validator: isValidCPF,
             message: '{PATH}: Invalid CPF ({VALUE})'
         }
+    },
+    profiles: {
+        type: [String],
+        required: false
     }
 });
 
-userSchema.statics.findByEmail = function(email: string) {
-    return this.findOne({email});
+userSchema.statics.findByEmail = function(email: string, projection: string) {
+    return this.findOne({email}, projection);
+}
+
+userSchema.methods.matches = function(password: string): Promise<boolean> {
+    
+    return bcrypt.compare(password, this.password)
+}
+
+userSchema.methods.hasAny = function(...profiles: string[]): boolean {
+    return profiles.some(profile => this.profiles.indexOf(profile) !== -1 );
 }
 
 const hasPassword = (obj, next) => {

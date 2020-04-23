@@ -1,10 +1,13 @@
+import fs from 'fs';
+
 import * as restify from 'restify';
 import mongoose from 'mongoose';
 
-import { environment as env } from '../common/environment';
+import { environment as env, environment } from '../common/environment';
 import { Router } from '../common/router';
 import { mergePatchBodyParser } from './merge-path.parser';
 import { handleError } from './error.handler';
+import { tokenParser } from '../security/token.parser';
 
 export class Server {
 
@@ -15,7 +18,7 @@ export class Server {
         (<any>mongoose.Promise) = global.Promise;
         return mongoose.connect(env.db.url, {
             useNewUrlParser: true,
-            useUnifiedTopology: true            
+            useUnifiedTopology: true
         });
     }
 
@@ -23,16 +26,23 @@ export class Server {
 
         return new Promise((resolve, reject) => {
 
-            try {
+            try {                
 
-                this.app = restify.createServer({
+                let options: restify.ServerOptions = {
                     name: 'meat-api',
                     version: '1.0.0'
-                });
+                };
 
-                this.app.use(restify.plugins.queryParser());
+                if (env.security.enableHTTPS) {
+                    options.certificate = fs.readFileSync(env.security.certificate);
+                    options.key = fs.readFileSync(env.security.key);
+                }
+
+                this.app = restify.createServer(options);
+
                 this.app.use(restify.plugins.bodyParser());
                 this.app.use(mergePatchBodyParser);
+                this.app.use(tokenParser);
 
                 // Routes
                 for (let router of routers)

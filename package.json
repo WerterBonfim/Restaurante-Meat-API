@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "nodemon main.ts",
     "dev:debug-brk": "nodemon --inspect-brk main.ts",
-    "dev:debug": "nodemon --inspect main.ts",    
-    "test": "ts-node jest.startup.ts"
+    "dev:debug": "nodemon --inspect main.ts",
+    "test": "ts-node jest.startup.ts",
+    "test:debug": "node --require ts-node/register --inspect-brk jest.startup.ts"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   "homepage": "https://github.com/WerterAllan/Restaurante-Meat-API#readme",
   "dependencies": {
     "bcrypt": "4.0.1",
+    "jsonwebtoken": "8.5.1",
     "mongoose": "5.9.7",
     "restify": "6.3.4",
     "restify-errors": "8.0.2"
@@ -33,6 +35,7 @@
   "devDependencies": {
     "@types/bcrypt": "3.0.0",
     "@types/jest": "25.2.1",
+    "@types/jsonwebtoken": "8.3.9",
     "@types/mongoose": "5.7.10",
     "@types/restify": "5.0.6",
     "@types/restify-errors": "4.3.3",
