@@ -8,6 +8,7 @@ import { Router } from '../common/router';
 import { mergePatchBodyParser } from './merge-path.parser';
 import { handleError } from './error.handler';
 import { tokenParser } from '../security/token.parser';
+import { logger } from '../common/logger';
 
 export class Server {
 
@@ -30,7 +31,8 @@ export class Server {
 
                 let options: restify.ServerOptions = {
                     name: 'meat-api',
-                    version: '1.0.0'
+                    version: '1.0.0',
+                    log: logger
                 };
 
                 if (env.security.enableHTTPS) {
@@ -39,6 +41,10 @@ export class Server {
                 }
 
                 this.app = restify.createServer(options);
+
+                this.app.pre(restify.plugins.requestLogger({
+                    log: logger
+                }));
 
                 this.app.use(restify.plugins.bodyParser());
                 this.app.use(mergePatchBodyParser);
@@ -49,6 +55,12 @@ export class Server {
                     router.applayRoutes(this.app);
 
                 this.app.on('restifyError', handleError);
+                this.app.on("after", restify.plugins.auditLogger({
+                    log: logger,
+                    event: 'after'
+                    // printLog: true,
+                    // server: this.app                    
+                }));
 
                 this.app.listen(env.server.port, () => {
                     resolve(this.app);
